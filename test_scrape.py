@@ -1,4 +1,4 @@
-from scrapers.draftkings_scraper import scrape_draftkings
+from scrapers.draftkings import scrape_draftkings
 
 games = scrape_draftkings()
 
