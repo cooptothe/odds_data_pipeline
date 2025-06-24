@@ -40,3 +40,12 @@ def insert_odds(conn, game_id, game, sportsbook="FanDuel"):
             game["spread_odds_home"], game["spread_odds_away"],
             game["total"], game["over_odds"], game["under_odds"]
         ))
+
+def find_game(conn, game):
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT id FROM games
+            WHERE home_team = %s AND away_team = %s AND DATE(game_date) = DATE(%s)
+        """, (game["home_team"], game["away_team"], game["game_date"]))
+        row = cur.fetchone()
+        return row[0] if row else None
