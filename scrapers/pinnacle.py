@@ -17,6 +17,11 @@ def scrape_pinnacle():
         response = requests.get(URL, params=params)
         response.raise_for_status()
         data = response.json()
+        print("📦 Raw game count:", len(data))
+        print("🧪 Sample game JSON:")
+        import json
+        print(json.dumps(data[:1], indent=2))  # print first game
+
         results = []
 
         for game in data:
