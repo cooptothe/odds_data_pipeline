@@ -17,11 +17,6 @@ def scrape_pinnacle():
         response = requests.get(URL, params=params)
         response.raise_for_status()
         data = response.json()
-        print("📦 Raw game count:", len(data))
-        print("🧪 Sample game JSON:")
-        import json
-        print(json.dumps(data[:1], indent=2))  # print first game
-
         results = []
 
         for game in data:
@@ -45,7 +40,16 @@ def scrape_pinnacle():
                 "under_odds": None
             }
 
-            for market in game.get("bookmakers", [])[0].get("markets", []):
+            # Safely access Pinnacle markets
+            bookmakers = game.get("bookmakers", [])
+            if not bookmakers:
+                continue
+
+            pinnacle = next((b for b in bookmakers if b["key"] == "pinnacle"), None)
+            if not pinnacle:
+                continue
+
+            for market in pinnacle.get("markets", []):
                 if market["key"] == "h2h":
                     for outcome in market["outcomes"]:
                         if outcome["name"] == home:
