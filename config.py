@@ -10,3 +10,5 @@ DB_CONFIG = {
     "user": os.getenv("DB_USER"),
     "password": os.getenv("DB_PASSWORD")
 }
+
+ODDS_API_KEY = os.getenv("ODDS_API_KEY")
