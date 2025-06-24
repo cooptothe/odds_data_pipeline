@@ -9,3 +9,7 @@ Normalization: Converts odds formats (American/decimal) and removes vig to calcu
 EV% Calculation: Compares the user’s sportsbook odds against market maker odds to compute Expected Value percentages, signaling bets with positive expected value.
 
 This pipeline empowers bettors with data-driven insights to find edges in the market.
+
+
+https://github.com/user-attachments/assets/150b46fa-da54-4c95-a55e-622044c042bb
+
