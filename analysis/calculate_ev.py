@@ -68,18 +68,18 @@ def calculate_ev():
         ev_home = expected_value(prob_home, dk_home)
         ev_away = expected_value(prob_away, dk_away)
 
+
+        print(f"\n{away} @ {home} ({date.date()})")
+        print(f"  ➤ DraftKings Home: {dk_home}, EV%: {ev_home * 100:.2f}%" if ev_home is not None else "  ⚠️ EV% home calc error")
+        print(f"  ➤ DraftKings Away: {dk_away}, EV%: {ev_away * 100:.2f}%" if ev_away is not None else "  ⚠️ EV% away calc error")
+
         # filter and print only +EV bets
         if ev_home is not None and ev_home > 0.03:
             print(f"🔥 +EV BET: {home} ML at {dk_home} | EV%: {ev_home * 100:.2f}%")
 
         if ev_away is not None and ev_away > 0.03:
             print(f"🔥 +EV BET: {away} ML at {dk_away} | EV%: {ev_away * 100:.2f}%")
-
-
-        print(f"\n{away} @ {home} ({date.date()})")
-        print(f"  ➤ DraftKings Home: {dk_home}, EV%: {ev_home * 100:.2f}%" if ev_home is not None else "  ⚠️ EV% home calc error")
-        print(f"  ➤ DraftKings Away: {dk_away}, EV%: {ev_away * 100:.2f}%" if ev_away is not None else "  ⚠️ EV% away calc error")
-
+            
     conn.close()
 
 if __name__ == "__main__":
