@@ -1,5 +1,5 @@
 import requests
-
+from utils.teams import normalize_team
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:139.0) Gecko/20100101 Firefox/139.0"
@@ -49,8 +49,8 @@ def scrape_draftkings():
             game = {
                 "game_id": event_id,
                 "game_date": start,
-                "home_team": home,
-                "away_team": away,
+                "home_team": normalize_team(home),
+                "away_team": normalize_team(away),
                 "moneyline_home": None,
                 "moneyline_away": None,
                 "run_line_home": None,

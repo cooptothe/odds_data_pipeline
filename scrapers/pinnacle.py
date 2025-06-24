@@ -1,6 +1,7 @@
 import requests
 from config import ODDS_API_KEY
 from math import isfinite
+from utils.teams import normalize_team
 
 URL = "https://api.the-odds-api.com/v4/sports/baseball_mlb/odds"
 
@@ -37,8 +38,8 @@ def scrape_pinnacle():
             game_obj = {
                 "game_id": game["id"],
                 "game_date": start,
-                "home_team": home,
-                "away_team": away,
+                "home_team": normalize_team(home),
+                "away_team": normalize_team(away),
                 "moneyline_home": None,
                 "moneyline_away": None,
                 "spread_home": None,

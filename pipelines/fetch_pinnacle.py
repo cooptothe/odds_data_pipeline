@@ -15,6 +15,7 @@ def run():
             print(f"⚠️ Skipping unmatched Pinnacle game: {game['away_team']} @ {game['home_team']}")
             continue
         insert_odds(conn, game_id, game, sportsbook="Pinnacle")
+        inserted += 1
 
 
     conn.commit()

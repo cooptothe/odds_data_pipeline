@@ -43,5 +43,5 @@ TEAM_NAME_MAP = {
     "SF Giants": "San Francisco Giants",
 }
 
-def normalize_team(name):
-    return TEAM_NAME_MAP.get(name, name)  # fallback to original if not mapped
+def normalize_team(name: str) -> str:
+    return TEAM_NAME_MAP.get(name.strip(), name.strip())
