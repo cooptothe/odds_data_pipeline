@@ -1,5 +1,5 @@
 # MLB Betting Edge Tool
-## This tool scrapes MLB pregame odds from DraftKings and Pinnacle sportsbooks, processes the data to calculate Expected Value percentages (EV%) for each betting market, and identifies value bets based on Pinnacle’s no-vig implied probabilities. By comparing Pinnacle’s market maker odds with DraftKings' lines, it highlights profitable betting opportunities.
+ This tool scrapes MLB pregame odds from DraftKings and Pinnacle sportsbooks, processes the data to calculate Expected Value percentages (EV%) for each betting market, and identifies value bets based on Pinnacle’s no-vig implied probabilities. By comparing Pinnacle’s market maker odds with DraftKings' lines, it highlights profitable betting opportunities.
 
 # How it works
 Ingestion: Fetches real-time MLB odds data from multiple sportsbooks.
