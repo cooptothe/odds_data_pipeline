@@ -11,7 +11,7 @@ def calculate_ev():
     conn = connect()
     cur = conn.cursor()
 
-    # Step 1: Join Pinnacle + DraftKings odds by game
+   # Step 1: Join Pinnacle + DraftKings odds by game
     cur.execute("""
         SELECT
             g.id,
@@ -40,6 +40,15 @@ def calculate_ev():
         WHERE dk.moneyline_home IS NOT NULL
         AND pin.moneyline_home IS NOT NULL;
     """)
+
+    # save ev_home and ev_away to the database
+    cur.execute("""
+    UPDATE odds
+    SET ev_home = %s, ev_away = %s
+    WHERE game_id = %s AND sportsbook = 'DraftKings'
+    """, (ev_home, ev_away, game_id))
+    conn.commit()
+
 
     rows = cur.fetchall()
     
@@ -79,7 +88,7 @@ def calculate_ev():
 
         if ev_away is not None and ev_away > 0.03:
             print(f"🔥 +EV BET: {away} ML at {dk_away} | EV%: {ev_away * 100:.2f}%")
-            
+
     conn.close()
 
 if __name__ == "__main__":
