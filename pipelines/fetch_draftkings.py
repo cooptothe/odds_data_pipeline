@@ -1,5 +1,5 @@
 from scrapers import draftkings
-from db.insert import connect, find_or_create_game, insert_draftkings_odds, insert_odds
+from db.insert import connect, find_or_create_game, insert_odds
 
 def run():
     print("🚀 Starting DraftKings pipeline...")
