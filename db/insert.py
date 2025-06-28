@@ -4,48 +4,42 @@ from config import DB_CONFIG
 def connect():
     return psycopg2.connect(**DB_CONFIG)
 
-def insert_game(conn, game):
+def insert_game(conn, game_obj):
     with conn.cursor() as cur:
+        # Ensure sport exists and get sport_id
         cur.execute("""
-            INSERT INTO games (game_date, home_team, away_team)
-            VALUES (%s, %s, %s)
+            INSERT INTO sports (key, title)
+            VALUES (%s, %s)
+            ON CONFLICT (key) DO UPDATE SET title = EXCLUDED.title
             RETURNING id
-        """, (game["game_date"], game["home_team"], game["away_team"]))
-        return cur.fetchone()[0]
+        """, (game_obj["sport_key"], game_obj["sport_key"].split("_")[-1].upper()))
+        sport_id = cur.fetchone()[0]
 
-def find_or_create_game(conn, game):
-    with conn.cursor() as cur:
+        # Insert game if it doesn't exist
         cur.execute("""
-            SELECT id FROM games
-            WHERE home_team = %s AND away_team = %s AND DATE(game_date) = DATE(%s)
-        """, (game["home_team"], game["away_team"], game["game_date"]))
-        row = cur.fetchone()
-
-        if row:
-            return row[0]
-        return insert_game(conn, game)
-
-def insert_odds(conn, game_id, game, sportsbook="FanDuel"):
-    with conn.cursor() as cur:
-        cur.execute("""
-            INSERT INTO odds (
-                game_id, sportsbook, moneyline_home, moneyline_away,
-                spread_home, spread_away, spread_odds_home, spread_odds_away,
-                total, over_odds, under_odds
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO games (id, sport_id, game_date, home_team, away_team, status)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            ON CONFLICT (id) DO NOTHING
         """, (
-            game_id, sportsbook,
-            game["moneyline_home"], game["moneyline_away"],
-            game["spread_home"], game["spread_away"],
-            game["spread_odds_home"], game["spread_odds_away"],
-            game["total"], game["over_odds"], game["under_odds"]
+            game_obj["id"], sport_id, game_obj["game_date"],
+            game_obj["home_team"], game_obj["away_team"], game_obj["status"]
         ))
 
-def find_game(conn, game):
+        conn.commit()
+        return game_obj["id"]
+
+def insert_odds(conn, game_id, odds_list):
     with conn.cursor() as cur:
-        cur.execute("""
-            SELECT id FROM games
-            WHERE home_team = %s AND away_team = %s AND DATE(game_date) = DATE(%s)
-        """, (game["home_team"], game["away_team"], game["game_date"]))
-        row = cur.fetchone()
-        return row[0] if row else None
+        for odds in odds_list:
+            cur.execute("""
+                INSERT INTO odds (
+                    game_id, sportsbook, market, side,
+                    price, decimal_price, implied_prob, point
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (
+                game_id,
+                odds["sportsbook"], odds["market"], odds["side"],
+                odds["price"], odds["decimal_price"],
+                odds["implied_prob"], odds["point"]
+            ))
+        conn.commit()
