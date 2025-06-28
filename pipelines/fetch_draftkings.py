@@ -10,7 +10,7 @@ def run():
     inserted = 0
 
     for game in games:
-        # Map DK field names to match DB schema
+        # Map DK field names to match DB schema for MLB
         game["spread_home"] = game.pop("run_line_home", None)
         game["spread_away"] = game.pop("run_line_away", None)
         game["spread_odds_home"] = game.pop("run_line_odds_home", None)
