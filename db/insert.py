@@ -6,27 +6,36 @@ def connect():
 
 def insert_game(conn, game_obj):
     with conn.cursor() as cur:
-        # Ensure sport exists and get sport_id
-        cur.execute("""
-            INSERT INTO sports (key, title)
-            VALUES (%s, %s)
-            ON CONFLICT (key) DO UPDATE SET title = EXCLUDED.title
-            RETURNING id
-        """, (game_obj["sport_key"], game_obj["sport_key"].split("_")[-1].upper()))
-        sport_id = cur.fetchone()[0]
+        try:
+            # Safely derive sport title
+            sport_key = game_obj["sport_key"]
+            title = sport_key.split("_")[-1].upper() if "_" in sport_key else sport_key.upper()
 
-        # Insert game if it doesn't exist
-        cur.execute("""
-            INSERT INTO games (id, sport_id, game_date, home_team, away_team, status)
-            VALUES (%s, %s, %s, %s, %s, %s)
-            ON CONFLICT (id) DO NOTHING
-        """, (
-            game_obj["id"], sport_id, game_obj["game_date"],
-            game_obj["home_team"], game_obj["away_team"], game_obj["status"]
-        ))
+            cur.execute("""
+                INSERT INTO sports (key, title)
+                VALUES (%s, %s)
+                ON CONFLICT (key) DO UPDATE SET title = EXCLUDED.title
+                RETURNING id
+            """, (sport_key, title))
+            sport_id = cur.fetchone()[0]
 
-        conn.commit()
-        return game_obj["id"]
+            cur.execute("""
+                INSERT INTO games (id, sport_id, game_date, home_team, away_team, status)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (id) DO NOTHING
+            """, (
+                game_obj["id"], sport_id, game_obj["game_date"],
+                game_obj["home_team"], game_obj["away_team"], game_obj["status"]
+            ))
+
+            conn.commit()
+            return game_obj["id"]
+
+        except Exception as e:
+            print("❌ insert_game error:", e)
+            print("Game object:", game_obj)
+            raise
+
 
 def insert_odds(conn, game_id, odds_list):
     with conn.cursor() as cur:

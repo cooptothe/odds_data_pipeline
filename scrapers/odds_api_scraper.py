@@ -1,5 +1,4 @@
 # scrapers/odds_api_scraper.py
-
 import requests
 from config import ODDS_API_KEY
 from utils.teams import normalize_team
@@ -18,6 +17,8 @@ MARKETS = "h2h,spreads,totals"  # Supported markets
 def decimal_to_american(decimal_odds):
     if not decimal_odds or not isfinite(decimal_odds):
         return None
+    if decimal_odds <= 1.0:
+        return None  # Invalid or placeholder line
     if decimal_odds >= 2.0:
         return int((decimal_odds - 1) * 100 + 0.5)
     else:
@@ -51,24 +52,30 @@ def parse_game(game_json):
             market_key = market["key"]
 
             for outcome in market.get("outcomes", []):
-                outcome_name = outcome["name"]
-                decimal_price = outcome["price"]
+                outcome_name = outcome.get("name")
+                decimal_price = outcome.get("price")
+
+                if not outcome_name or not decimal_price or decimal_price <= 1.0:
+                    continue  # Skip invalid or placeholder odds
+
                 american_price = decimal_to_american(decimal_price)
                 implied_prob = decimal_to_implied_prob(decimal_price)
                 point = outcome.get("point")
 
-                # Determine side based on market + team
+                # Determine side
                 if market_key == "h2h":
                     if outcome_name == home_team:
                         side = "home"
                     elif outcome_name == away_team:
                         side = "away"
                     else:
-                        side = None
+                        continue
                 elif market_key == "spreads":
                     side = "home" if outcome_name == home_team else "away"
                 elif market_key == "totals":
-                    side = outcome_name.lower()  # "Over" or "Under"
+                    side = outcome_name.lower()
+                else:
+                    continue  # Ignore unknown market type
 
                 odds_list.append({
                     "sportsbook": sportsbook,
@@ -79,6 +86,7 @@ def parse_game(game_json):
                     "implied_prob": implied_prob,
                     "point": point
                 })
+
 
     return game_obj, odds_list
 
@@ -128,11 +136,3 @@ if __name__ == "__main__":
     #     games = fetch_odds_for_sport(sport_key)
     #     if games:
     #         print(f"🧪 Sample: {games[0]['home_team']} vs {games[0]['away_team']}")
-
-games = fetch_odds_for_sport("mma_mixed_martial_arts")
-for g in games:
-    game_obj, odds_list = parse_game(g)
-    print("🎯 Game:", game_obj)
-    print("📊 Odds:")
-    for o in odds_list:
-        print("  ", o)
