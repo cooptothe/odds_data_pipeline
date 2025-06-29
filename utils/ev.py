@@ -32,3 +32,16 @@ def expected_value(win_prob, decimal_odds):
     if not win_prob or not decimal_odds or decimal_odds <= 1:
         return None
     return round((decimal_odds * win_prob) - 1, 4)
+
+def kelly_fraction(prob: float, odds: float, factor: float = 0.50) -> float:
+    """
+    Conservative Kelly Criterion.
+    prob: win probability (e.g. 0.58)
+    odds: decimal odds (e.g. 2.20)
+    factor: scale down Kelly fraction to reduce variance
+    Returns stake fraction of bankroll.
+    """
+    b = odds - 1
+    q = 1 - prob
+    raw_fraction = (b * prob - q) / b
+    return max(raw_fraction * factor, 0)

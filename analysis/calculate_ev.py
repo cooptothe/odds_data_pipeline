@@ -1,16 +1,18 @@
 import psycopg2
 from config import DB_CONFIG
-from utils.ev import no_vig_prob, expected_value, decimal_to_american
+from utils.ev import no_vig_prob, expected_value, decimal_to_american, kelly_fraction
 from datetime import datetime
 import pytz
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
 # subprocess.run(["python", "-m", "pipelines.fetch_odds_api"])
 
+bankroll = 100  # or prompt for it dynamically later
+
 
 SHARP_BOOKS = ["pinnacle", "bookmaker", "circa", "prophetx"]
 RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "caesars", "fanatics"]
-MARKETS = ["moneyline", "spreads", "totals"]
+MARKETS = ["h2h", "spreads", "totals"]
 
 def connect():
     return psycopg2.connect(**DB_CONFIG)
@@ -92,13 +94,14 @@ def calculate_ev():
 
                 # Use first available point as market line
                 _, line_point = next(iter(all_books.values()))
+                
                 line_label = ""
                 if market == "spreads":
                     line_label = f" ({line_point:+.1f})"
                 elif market == "totals":
                     line_label = f" ({line_point:.1f})"
 
-                market_label = market.title().replace("Moneyline", "Moneyline").replace("Spreads", "Spread").replace("Totals", "Totals")
+                market_label = market.title().replace("H2H", "Moneyline").replace("Spreads", "Spread").replace("Totals", "Total")
                 print(f"  ➤ {market_label}{line_label} - {side.title()} (Win%: {win_prob:.2%})")
 
                 for book in RECREATIONAL_BOOKS:
@@ -109,8 +112,13 @@ def calculate_ev():
                         american = decimal_to_american(price)
                         odds_str = f"{american:+}" if american is not None else "N/A"
                         ev_str = f"{ev_pct:+.2f}%" if ev_pct is not None else "N/A"
+                        stake_frac = kelly_fraction(win_prob, price, factor=0.25)
+                        stake_amt = bankroll * stake_frac
+                        stake_str = f"${stake_amt:.2f}" if stake_amt >= 1 else ""
 
                         line = f"    {book.title():<10} | Odds: {odds_str:<6} | EV: {ev_str}"
+                        if stake_str:
+                            line += f" | Kelly Stake: {stake_str}"
                         if ev_pct is None or ev_pct < 3 or ev_pct > 14:
                             continue  # skip out-of-range EV%
                         emoji = highlight_ev(ev_pct)
