@@ -4,6 +4,9 @@ from utils.ev import no_vig_prob, expected_value, decimal_to_american, kelly_fra
 from datetime import datetime
 import pytz
 import argparse
+import csv
+import os
+
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
 # subprocess.run(["python", "-m", "pipelines.fetch_odds_api"])
@@ -44,6 +47,15 @@ def highlight_ev(ev_pct):
 def calculate_ev():
     conn = connect()
     cur = conn.cursor()
+    output_file = "ev_bets.csv"
+
+    # Create or overwrite file and write header
+    with open(output_file, mode="w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "date", "sport", "home_team", "away_team", "market", "side", "line", 
+            "sportsbook", "odds_decimal", "odds_american", "win_prob", "ev_percent", "kelly_stake"
+        ])
     
 
     # Filter for today's games only
@@ -128,13 +140,17 @@ def calculate_ev():
                             continue  # skip out-of-range EV%
                         emoji = highlight_ev(ev_pct)
                         line += f" {emoji}"
+                        if 3 <= ev_pct <= 14:
+                            with open(output_file, mode="a", newline="") as f:
+                                writer = csv.writer(f)
+                                writer.writerow([
+                                    format_ct_time(game_dt), sport_title, home, away,
+                                    market_label, side.title(), line_label.strip("()").strip(),
+                                    book.title(), price, american, win_prob, ev_pct, round(stake_amt, 2)
+                                ])
                         print(line)
-
-
-                        
-
-
     conn.close()
+
 
 if __name__ == "__main__":
     print("🚀 Calculating EV% across all markets...")
