@@ -3,11 +3,16 @@ from config import DB_CONFIG
 from utils.ev import no_vig_prob, expected_value, decimal_to_american, kelly_fraction
 from datetime import datetime
 import pytz
+import argparse
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
 # subprocess.run(["python", "-m", "pipelines.fetch_odds_api"])
 
-bankroll = 100  # or prompt for it dynamically later
+parser = argparse.ArgumentParser()
+parser.add_argument("--bankroll", type=float, default=100, help="Bankroll amount for Kelly staking")
+args = parser.parse_args()
+bankroll = args.bankroll
+
 
 
 SHARP_BOOKS = ["pinnacle", "bookmaker", "circa", "prophetx"]
