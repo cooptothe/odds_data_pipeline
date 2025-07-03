@@ -51,6 +51,19 @@ def save_session(session):
     with open(SESSION_FILE, "w") as f:
         json.dump(session, f, indent=2)
 
+LINE_CACHE_FILE = "line_cache.json"
+
+def load_line_cache():
+    if os.path.exists(LINE_CACHE_FILE):
+        with open(LINE_CACHE_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+def save_line_cache(cache):
+    with open(LINE_CACHE_FILE, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
 
 def highlight_ev(ev_pct):
     if 3 <= ev_pct < 6:
@@ -95,6 +108,9 @@ def calculate_ev():
     """)
 
     games = cur.fetchall()
+
+    
+    line_cache = load_line_cache()
 
     for game_id, home, away, sport_title, game_dt, status in games:
         is_live = status == "live"
@@ -146,6 +162,7 @@ def calculate_ev():
                 print(f"  ➤ {market_label}{line_label} - {side.title()} (Win%: {win_prob:.2%})")
 
                 for book in RECREATIONAL_BOOKS:
+                    key = f"{home}_{away}_{sport_title}_{market}_{side}_{book}"
                     if book in all_books:
                         price, _ = all_books[book]
                         ev = expected_value(win_prob, price)
@@ -156,6 +173,19 @@ def calculate_ev():
                         stake_frac = kelly_fraction(win_prob, price, factor=0.25)
                         stake_amt = bankroll * stake_frac
                         stake_str = f"${stake_amt:.2f}" if stake_amt >= 1 else ""
+                        prev_entry = line_cache.get(key)
+
+                        change_indicator = ""
+                        if prev_entry is None:
+                            change_indicator = "✅ New"
+                        elif abs(prev_entry["ev_pct"] - ev_pct) >= 0.1:
+                            if ev_pct > prev_entry["ev_pct"]:
+                                change_indicator = "📈 EV↑"
+                            else:
+                                change_indicator = "📉 EV↓"
+                        elif price != prev_entry["price"]:
+                            change_indicator = "⚠️ Line moved"
+
 
                         line = f"    {book.title():<10} | Odds: {odds_str:<6} | EV: {ev_str}"
                         if stake_str:
@@ -163,7 +193,7 @@ def calculate_ev():
                         if ev_pct is None or ev_pct < 3 or ev_pct > 14:
                             continue  # skip out-of-range EV%
                         emoji = highlight_ev(ev_pct)
-                        line += f" {emoji}"
+                        line += f" {emoji} {change_indicator}"
                         if 3 <= ev_pct <= 14:
                             with open(output_file, mode="a", newline="") as f:
                                 writer = csv.writer(f)
@@ -186,9 +216,18 @@ def calculate_ev():
                                 })
                         print(line)
 
+                
+    line_cache[key] = {
+    "ev_pct": ev_pct,
+    "price": price
+}
+
+
         
     conn.close()
     save_session(session)
+    save_line_cache(line_cache)
+
 
     print("\n📊 Session Summary:")
     print(f"Bankroll: ${session['bankroll']:.2f}")
