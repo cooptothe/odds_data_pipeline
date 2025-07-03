@@ -25,7 +25,7 @@ def run():
     conn = connect()
 
     for sport_key in SPORT_KEYS:
-        games = fetch_odds_for_sport(sport_key)
+        games = fetch_odds_for_sport("baseball_mlb")
         for game_json in games:
             game_obj, odds_list = parse_game(game_json)
             game_id = insert_game(conn, game_obj)

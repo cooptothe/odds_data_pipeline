@@ -6,6 +6,8 @@ import pytz
 import argparse
 import csv
 import os
+import json
+
 
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
@@ -32,6 +34,24 @@ def format_ct_time(utc_dt):
     ct = utc_dt.astimezone(central)
     return ct.strftime("%Y-%m-%d %I:%M %p CT")
 
+SESSION_FILE = "session.json"
+
+def load_session():
+    if os.path.exists(SESSION_FILE):
+        with open(SESSION_FILE, "r") as f:
+            return json.load(f)
+    return {
+        "bankroll": bankroll,
+        "risked": 0,
+        "won": 0,
+        "bets": []
+    }
+
+def save_session(session):
+    with open(SESSION_FILE, "w") as f:
+        json.dump(session, f, indent=2)
+
+
 def highlight_ev(ev_pct):
     if 3 <= ev_pct < 6:
         return "🧠"
@@ -41,6 +61,8 @@ def highlight_ev(ev_pct):
         return "💎"
     else:
         return ""
+    
+    
 
 
 
@@ -48,6 +70,8 @@ def calculate_ev():
     conn = connect()
     cur = conn.cursor()
     output_file = "ev_bets.csv"
+    session = load_session()
+
 
     # Create or overwrite file and write header
     with open(output_file, mode="w", newline="") as f:
@@ -148,8 +172,28 @@ def calculate_ev():
                                     market_label, side.title(), line_label.strip("()").strip(),
                                     book.title(), price, american, win_prob, ev_pct, round(stake_amt, 2)
                                 ])
+                                # Update session stats
+                                session["risked"] += stake_amt
+                                session["bets"].append({
+                                    "book": book,
+                                    "game": f"{away} @ {home}",
+                                    "market": market,
+                                    "side": side,
+                                    "odds": price,
+                                    "win_prob": round(win_prob, 4),
+                                    "ev_pct": round(ev_pct, 2),
+                                    "stake": round(stake_amt, 2)
+                                })
                         print(line)
+
+        
     conn.close()
+    save_session(session)
+
+    print("\n📊 Session Summary:")
+    print(f"Bankroll: ${session['bankroll']:.2f}")
+    print(f"Total Risked: ${session['risked']:.2f}")
+    print(f"Bets Logged: {len(session['bets'])}")
 
 
 if __name__ == "__main__":
