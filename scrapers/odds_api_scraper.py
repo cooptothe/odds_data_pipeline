@@ -8,8 +8,8 @@ from math import isfinite
 ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4/sports"
 
 # Books
-SHARP_BOOKS = ["pinnacle", "bookmaker", "circa", "prophetx"]
-RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "caesars", "fanatics"]
+SHARP_BOOKS = ["pinnacle", "novig", "betonlineag"]
+RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "betmgm"]
 ALL_BOOKS = SHARP_BOOKS + RECREATIONAL_BOOKS
 
 MARKETS = "h2h,spreads,totals"  # Supported markets
@@ -111,28 +111,3 @@ def fetch_odds_for_sport(sport_key: str, region: str = "us", markets: str = MARK
     except Exception as e:
         print(f"❌ Error fetching odds for {sport_key}:", e)
         return []
-
-if __name__ == "__main__":
-    test_sports = [
-        "baseball_mlb",
-        "basketball_nba",
-        "basketball_wnba",                 # WNBA (NBA is offseason)
-        "americanfootball_nfl",            # NFL
-        "americanfootball_ncaaf",          # College Football
-        "mma_mixed_martial_arts",          # UFC / MMA
-        "boxing_boxing",                   # Boxing
-        "hockey_nhl",                      # NHL
-        "soccer_epl",                      # Premier League
-        "soccer_usa_mls",                  # MLS
-        "soccer_italy_serie_a",            # Serie A
-        "soccer_germany_bundesliga",       # Bundesliga
-        "soccer_france_ligue_one",         # Ligue 1
-        "soccer_mexico_ligamx",            # Liga MX
-        "tennis_atp_wimbledon",            # Wimbledon ATP
-        "tennis_wta_wimbledon"             # Wimbledon WTA
-    ]
-
-    # for sport_key in test_sports:
-    #     games = fetch_odds_for_sport(sport_key)
-    #     if games:
-    #         print(f"🧪 Sample: {games[0]['home_team']} vs {games[0]['away_team']}")

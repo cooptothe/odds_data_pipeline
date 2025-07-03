@@ -7,7 +7,9 @@ import argparse
 import csv
 import os
 import json
+from utils.discord import send_discord_alert
 
+DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")  # store in .env
 
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
@@ -17,7 +19,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--bankroll", type=float, default=100, help="Bankroll amount for Kelly staking")
 args = parser.parse_args()
 bankroll = args.bankroll
-
 
 
 SHARP_BOOKS = ["pinnacle", "bookmaker", "circa", "prophetx"]
@@ -74,9 +75,6 @@ def highlight_ev(ev_pct):
         return "💎"
     else:
         return ""
-    
-    
-
 
 
 def calculate_ev():
@@ -233,6 +231,19 @@ def calculate_ev():
     print(f"Bankroll: ${session['bankroll']:.2f}")
     print(f"Total Risked: ${session['risked']:.2f}")
     print(f"Bets Logged: {len(session['bets'])}")
+
+
+    if session["bets"]:
+        top_bets = session["bets"][-5:]  # last 5 bets this run
+        discord_msg = "**📈 Top EV Bets Alert**\n"
+        for bet in top_bets:
+            emoji = highlight_ev(bet["ev_pct"])
+            discord_msg += (
+                f"{bet['game']} | {bet['market']} - {bet['side']} | "
+                f"Odds: {bet['odds']} | EV: {bet['ev_pct']}% | Stake: ${bet['stake']} {emoji}\n"
+            )
+        send_discord_alert(discord_msg, DISCORD_WEBHOOK_URL)
+
 
 
 if __name__ == "__main__":
