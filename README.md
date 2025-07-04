@@ -8,7 +8,7 @@ Normalization: Converts odds formats (American/decimal) and removes vig to calcu
 
 EV% Calculation: Compares the user’s sportsbook odds against market maker odds to compute Expected Value percentages, signaling bets with positive expected value.
 
-Discord Alerts: Created webhook that sends alrts to discord channel.
+Discord Alerts: Created webhook that sends alerts to discord channel.
 
 This pipeline empowers bettors with data-driven insights to find edges in the market.
 
