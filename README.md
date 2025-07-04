@@ -13,5 +13,8 @@ Discord Alerts: Created webhook that sends alerts to discord channel.
 This pipeline empowers bettors with data-driven insights to find edges in the market.
 
 
-https://github.com/user-attachments/assets/150b46fa-da54-4c95-a55e-622044c042bb
+## DEMO
+
+https://github.com/user-attachments/assets/ec7666e7-825b-4bd4-aca5-ff3e8e7aec95
+
 
