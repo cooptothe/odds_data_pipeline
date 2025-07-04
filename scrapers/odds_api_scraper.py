@@ -5,6 +5,7 @@ from utils.teams import normalize_team
 from math import isfinite
 
 
+
 ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4/sports"
 
 # Books

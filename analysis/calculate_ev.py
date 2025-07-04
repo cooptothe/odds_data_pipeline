@@ -8,6 +8,7 @@ import csv
 import os
 import json
 from utils.discord import send_discord_alert
+from collections import defaultdict
 
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")  # store in .env
 
@@ -144,6 +145,14 @@ def calculate_ev():
 
                 prob_list = no_vig_prob(sharp_prices)
                 win_prob = prob_list[0] if prob_list else None
+
+                if not prob_list or len(prob_list) < 2:
+                    continue
+
+                market_width = abs(prob_list[0] - prob_list[1]) * 100
+                if not (0 <= market_width <= 50):
+                    continue
+
                 if win_prob is None:
                     continue
 
@@ -206,6 +215,9 @@ def calculate_ev():
                                     "book": book,
                                     "game": f"{away} @ {home}",
                                     "market": market,
+                                    "line": line_label.strip("()").strip(),
+                                    "sport": sport_title,
+                                    "date": format_ct_time(game_dt),
                                     "side": side,
                                     "odds": price,
                                     "win_prob": round(win_prob, 4),
@@ -232,17 +244,62 @@ def calculate_ev():
     print(f"Total Risked: ${session['risked']:.2f}")
     print(f"Bets Logged: {len(session['bets'])}")
 
+    MAX_DISCORD_LENGTH = 1900  # Leave buffer for formatting
+    discord_msg = "**📈 Top EV Bets Alert**\n"
+    char_count = len(discord_msg)
+
 
     if session["bets"]:
-        top_bets = session["bets"][-5:]  # last 5 bets this run
-        discord_msg = "**📈 Top EV Bets Alert**\n"
-        for bet in top_bets:
-            emoji = highlight_ev(bet["ev_pct"])
-            discord_msg += (
-                f"{bet['game']} | {bet['market']} - {bet['side']} | "
-                f"Odds: {bet['odds']} | EV: {bet['ev_pct']}% | Stake: ${bet['stake']} {emoji}\n"
-            )
-        send_discord_alert(discord_msg, DISCORD_WEBHOOK_URL)
+        grouped_bets = defaultdict(list)
+        for bet in session["bets"]:
+            key = (bet["game"], bet["market"], bet["side"])
+            grouped_bets[key].append(bet)
+
+        messages = []
+        current_msg = "**📈 Top EV Bets Alert**\n"
+        printed_games = set()
+
+        for (game, market, side), bets in grouped_bets.items():
+            if not bets:
+                continue
+
+            sport = bets[0].get("sport", "")
+            win_prob = bets[0].get("win_prob", 0)
+            line = bets[0].get("line", "")
+            market_label = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
+
+            header = f"\n🏟️ {game} ({sport})\n"
+            market_line = f"  ➤ {market_label} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
+
+            if len(current_msg) + len(header) + len(market_line) >= 1900:
+                messages.append(current_msg)
+                current_msg = "**📈 Top EV Bets Alert**\n"
+
+            if game not in printed_games:
+                current_msg += header
+                printed_games.add(game)
+
+            current_msg += market_line
+
+            for bet in bets:
+                emoji = highlight_ev(bet["ev_pct"])
+                american = decimal_to_american(bet["odds"])
+                odds_str = f"{american:+}" if american else f"{bet['odds']:.2f}"
+                stake_str = f" | Kelly Stake: ${bet['stake']:.2f}" if bet["stake"] >= 1 else ""
+                bet_line = f"    {bet['book'].title():<10} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
+
+                if len(current_msg) + len(bet_line) >= 1900:
+                    messages.append(current_msg)
+                    current_msg = "**📈 Top EV Bets Alert**\n"
+
+                current_msg += bet_line
+
+        if current_msg.strip() and current_msg not in messages:
+            messages.append(current_msg)
+
+        for msg in messages:
+            send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
+
 
 
 
