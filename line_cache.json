@@ -1,6 +1,26 @@
 {
-  "Seattle Mariners_Kansas City Royals_MLB_totals_under_fanatics": {
-    "ev_pct": -8.16,
+  "Seattle Mariners_Kansas City Royals_MLB_totals_under_betmgm": {
+    "ev_pct": -44.42,
+    "price": 1.8
+  },
+  "Zeynep Sonmez_Ekaterina Alexandrova_WIMBLEDON_totals_under_betmgm": {
+    "ev_pct": -34.489999999999995,
+    "price": 1.91
+  },
+  "Minnesota Twins_Tampa Bay Rays_MLB_totals_under_betmgm": {
+    "ev_pct": -38.79,
     "price": 1.87
+  },
+  "San Diego Padres_Texas Rangers_MLB_totals_under_betmgm": {
+    "ev_pct": -34.21,
+    "price": 1.95
+  },
+  "Atlanta Braves_Baltimore Orioles_MLB_totals_under_betmgm": {
+    "ev_pct": -37.2,
+    "price": 2.0
+  },
+  "Colorado Rockies_Chicago White Sox_MLB_totals_under_betmgm": {
+    "ev_pct": -35.65,
+    "price": 1.95
   }
 }

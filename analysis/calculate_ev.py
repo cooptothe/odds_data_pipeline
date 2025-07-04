@@ -14,7 +14,7 @@ DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")  # store in .env
 
 # import subprocess
 # print("🔄 Running odds ingestion pipeline...")
-# subprocess.run(["python", "-m", "pipelines.fetch_odds_api"])
+# subprocess.run(["python", "-m", "pipelines.fetch_odds_api", "--sport", "baseball_mlb"])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--bankroll", type=float, default=100, help="Bankroll amount for Kelly staking")
@@ -22,8 +22,8 @@ args = parser.parse_args()
 bankroll = args.bankroll
 
 
-SHARP_BOOKS = ["pinnacle", "bookmaker", "circa", "prophetx"]
-RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "caesars", "fanatics"]
+SHARP_BOOKS = ["pinnacle", "novig", "betonlineag"]
+RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "betmgm"]
 MARKETS = ["h2h", "spreads", "totals"]
 
 def connect():
@@ -100,9 +100,8 @@ def calculate_ev():
     FROM games g
     JOIN sports s ON g.sport_id = s.id
     WHERE 
-        (g.status = 'live'
-        OR (g.status = 'upcoming' AND g.game_date BETWEEN NOW() AND NOW() + INTERVAL '12 hours')
-        )
+    g.game_date > NOW() - INTERVAL '15 minutes'
+    AND g.game_date < NOW() + INTERVAL '12 hours'
     ORDER BY g.game_date
     """)
 
@@ -121,7 +120,7 @@ def calculate_ev():
             cur.execute("""
                 SELECT sportsbook, side, decimal_price, point
                 FROM odds
-                WHERE game_id = %s AND market = %s
+                WHERE game_id = %s AND market = %s AND fetched_at > NOW() - INTERVAL '30 minutes'
             """, (game_id, market))
 
             rows = cur.fetchall()
@@ -175,6 +174,10 @@ def calculate_ev():
                         ev = expected_value(win_prob, price)
                         ev_pct = ev * 100 if ev is not None else None
                         american = decimal_to_american(price)
+                        american = decimal_to_american(price)
+                        # Filter by odds range (-250 to +120)
+                        if american is None or american < -250 or american > +120:
+                            continue
                         odds_str = f"{american:+}" if american is not None else "N/A"
                         ev_str = f"{ev_pct:+.2f}%" if ev_pct is not None else "N/A"
                         stake_frac = kelly_fraction(win_prob, price, factor=0.25)
@@ -210,12 +213,17 @@ def calculate_ev():
                                     book.title(), price, american, win_prob, ev_pct, round(stake_amt, 2)
                                 ])
                                 # Update session stats
+                                bet_key = f"{away}@{home}_{market}_{side}_{book}_{line_label.strip()}"
+                                if any(bet.get("key") == bet_key for bet in session["bets"]):
+                                    continue  # Skip duplicate
+
                                 session["risked"] += stake_amt
                                 session["bets"].append({
+                                    "key": bet_key,  # track the key inside the bet
                                     "book": book,
                                     "game": f"{away} @ {home}",
                                     "market": market,
-                                    "line": line_label.strip("()").strip(),
+                                    "line": line_label,
                                     "sport": sport_title,
                                     "date": format_ct_time(game_dt),
                                     "side": side,
@@ -224,6 +232,7 @@ def calculate_ev():
                                     "ev_pct": round(ev_pct, 2),
                                     "stake": round(stake_amt, 2)
                                 })
+
                         print(line)
 
                 
@@ -249,56 +258,56 @@ def calculate_ev():
     char_count = len(discord_msg)
 
 
-    if session["bets"]:
-        grouped_bets = defaultdict(list)
-        for bet in session["bets"]:
-            key = (bet["game"], bet["market"], bet["side"])
-            grouped_bets[key].append(bet)
+    # if session["bets"]:
+    #     grouped_bets = defaultdict(list)
+    #     for bet in session["bets"]:
+    #         key = (bet["game"], bet["market"], bet["side"])
+    #         grouped_bets[key].append(bet)
 
-        messages = []
-        current_msg = "**📈 Top EV Bets Alert**\n"
-        printed_games = set()
+    #     messages = []
+    #     current_msg = "**📈 Top EV Bets Alert**\n"
+    #     printed_games = set()
 
-        for (game, market, side), bets in grouped_bets.items():
-            if not bets:
-                continue
+    #     for (game, market, side), bets in grouped_bets.items():
+    #         if not bets:
+    #             continue
 
-            sport = bets[0].get("sport", "")
-            win_prob = bets[0].get("win_prob", 0)
-            line = bets[0].get("line", "")
-            market_label = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
+    #         sport = bets[0].get("sport", "")
+    #         win_prob = bets[0].get("win_prob", 0)
+    #         line = bets[0].get("line", "")
+    #         market_title = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
 
-            header = f"\n🏟️ {game} ({sport})\n"
-            market_line = f"  ➤ {market_label} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
+    #         header = f"\n🏟️ {game} ({sport})\n"
+    #         market_line = f"  ➤ {market_title} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
 
-            if len(current_msg) + len(header) + len(market_line) >= 1900:
-                messages.append(current_msg)
-                current_msg = "**📈 Top EV Bets Alert**\n"
+    #         if len(current_msg) + len(header) + len(market_line) >= 1900:
+    #             messages.append(current_msg)
+    #             current_msg = "**📈 Top EV Bets Alert**\n"
 
-            if game not in printed_games:
-                current_msg += header
-                printed_games.add(game)
+    #         if game not in printed_games:
+    #             current_msg += header
+    #             printed_games.add(game)
 
-            current_msg += market_line
+    #         current_msg += market_line
 
-            for bet in bets:
-                emoji = highlight_ev(bet["ev_pct"])
-                american = decimal_to_american(bet["odds"])
-                odds_str = f"{american:+}" if american else f"{bet['odds']:.2f}"
-                stake_str = f" | Kelly Stake: ${bet['stake']:.2f}" if bet["stake"] >= 1 else ""
-                bet_line = f"    {bet['book'].title():<10} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
+    #         for bet in bets:
+    #             emoji = highlight_ev(bet["ev_pct"])
+    #             american = decimal_to_american(bet["odds"])
+    #             odds_str = f"{american:+}" if american else f"{bet['odds']:.2f}"
+    #             stake_str = f" | Kelly Stake: ${bet['stake']:.2f}" if bet["stake"] >= 1 else ""
+    #             bet_line = f"    {bet['book'].title():<10} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
 
-                if len(current_msg) + len(bet_line) >= 1900:
-                    messages.append(current_msg)
-                    current_msg = "**📈 Top EV Bets Alert**\n"
+    #             if len(current_msg) + len(bet_line) >= 1900:
+    #                 messages.append(current_msg)
+    #                 current_msg = "**📈 Top EV Bets Alert**\n"
 
-                current_msg += bet_line
+    #             current_msg += bet_line
 
-        if current_msg.strip() and current_msg not in messages:
-            messages.append(current_msg)
+    #     if current_msg.strip() and current_msg not in messages:
+    #         messages.append(current_msg)
 
-        for msg in messages:
-            send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
+    #     for msg in messages:
+    #         send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
 
 
 

@@ -22,7 +22,12 @@ def insert_game(conn, game_obj):
             cur.execute("""
                 INSERT INTO games (id, sport_id, game_date, home_team, away_team, status)
                 VALUES (%s, %s, %s, %s, %s, %s)
-                ON CONFLICT (id) DO NOTHING
+                ON CONFLICT (id) DO UPDATE
+                SET sport_id = EXCLUDED.sport_id,
+                    game_date = EXCLUDED.game_date,
+                    home_team = EXCLUDED.home_team,
+                    away_team = EXCLUDED.away_team,
+                    status = EXCLUDED.status
             """, (
                 game_obj["id"], sport_id, game_obj["game_date"],
                 game_obj["home_team"], game_obj["away_team"], game_obj["status"]
@@ -39,12 +44,14 @@ def insert_game(conn, game_obj):
 
 def insert_odds(conn, game_id, odds_list):
     with conn.cursor() as cur:
+        cur.execute("DELETE FROM odds WHERE game_id = %s", (game_id,))  # ✅ clear old odds
         for odds in odds_list:
             cur.execute("""
                 INSERT INTO odds (
                     game_id, sportsbook, market, side,
-                    price, decimal_price, implied_prob, point
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                    price, decimal_price, implied_prob, point,
+                    fetched_at
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
             """, (
                 game_id,
                 odds["sportsbook"], odds["market"], odds["side"],
