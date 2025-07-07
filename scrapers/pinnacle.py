@@ -21,7 +21,8 @@ def scrape_pinnacle():
         "regions": "us",
         "markets": "h2h,spreads,totals",
         "bookmakers": "pinnacle",
-        "apiKey": ODDS_API_KEY
+        "apiKey": ODDS_API_KEY,
+        
     }
 
     try:

@@ -50,12 +50,14 @@ def insert_odds(conn, game_id, odds_list):
                 INSERT INTO odds (
                     game_id, sportsbook, market, side,
                     price, decimal_price, implied_prob, point,
+                    betslip_link, market_link, event_link,
                     fetched_at
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
             """, (
                 game_id,
                 odds["sportsbook"], odds["market"], odds["side"],
                 odds["price"], odds["decimal_price"],
-                odds["implied_prob"], odds["point"]
+                odds["implied_prob"], odds["point"],
+                odds.get("betslip_link"), odds.get("market_link"), odds.get("event_link")
             ))
         conn.commit()

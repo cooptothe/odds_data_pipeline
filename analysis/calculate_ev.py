@@ -9,12 +9,13 @@ import os
 import json
 from utils.discord import send_discord_alert
 from collections import defaultdict
+import decimal
 
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")  # store in .env
 
-# import subprocess
-# print("🔄 Running odds ingestion pipeline...")
-# subprocess.run(["python", "-m", "pipelines.fetch_odds_api", "--sport", "baseball_mlb"])
+import subprocess
+print("🔄 Running odds ingestion pipeline...")
+subprocess.run(["python", "-m", "pipelines.fetch_odds_api", "--sport", "upcoming"])
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--bankroll", type=float, default=100, help="Bankroll amount for Kelly staking")
@@ -29,12 +30,19 @@ MARKETS = ["h2h", "spreads", "totals"]
 def connect():
     return psycopg2.connect(**DB_CONFIG)
 
-def format_ct_time(utc_dt):
-    # Convert UTC datetime to Central Time (America/Chicago)
+# def format_ct_time(utc_dt):
+#     # Convert UTC datetime to Central Time (America/Chicago)
+#     central = pytz.timezone("America/Chicago")
+#     utc_dt = utc_dt.replace(tzinfo=pytz.UTC)
+#     ct = utc_dt.astimezone(central)
+#     return ct.strftime("%Y-%m-%d %I:%M %p CT")
+
+def format_ct_short_time(utc_dt):
     central = pytz.timezone("America/Chicago")
     utc_dt = utc_dt.replace(tzinfo=pytz.UTC)
     ct = utc_dt.astimezone(central)
-    return ct.strftime("%Y-%m-%d %I:%M %p CT")
+    return ct.strftime("%I:%M %p CT")
+
 
 SESSION_FILE = "session.json"
 
@@ -57,13 +65,28 @@ LINE_CACHE_FILE = "line_cache.json"
 
 def load_line_cache():
     if os.path.exists(LINE_CACHE_FILE):
-        with open(LINE_CACHE_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(LINE_CACHE_FILE, "r") as f:
+                return json.load(f)
+        except json.JSONDecodeError:
+            print("⚠️ line_cache.json is corrupted. Resetting cache.")
+            return {}
     return {}
 
 def save_line_cache(cache):
+    # Convert all Decimal values to float for JSON serialization
+    def convert(obj):
+        if isinstance(obj, dict):
+            return {k: convert(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert(i) for i in obj]
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
+        else:
+            return obj
+
     with open(LINE_CACHE_FILE, "w") as f:
-        json.dump(cache, f, indent=2)
+        json.dump(convert(cache), f, indent=2)
 
 
 
@@ -82,8 +105,12 @@ def calculate_ev():
     conn = connect()
     cur = conn.cursor()
     output_file = "ev_bets.csv"
-    session = load_session()
 
+    # Load previous session before adding new bets
+    prev_session = load_session()
+    prev_bet_keys = set(bet["key"] for bet in prev_session.get("bets", []))
+
+    session = load_session()  # This will be updated with new bets
 
     # Create or overwrite file and write header
     with open(output_file, mode="w", newline="") as f:
@@ -113,12 +140,12 @@ def calculate_ev():
     for game_id, home, away, sport_title, game_dt, status in games:
         is_live = status == "live"
         live_tag = " 🛰️" if is_live else ""
-        print(f"\n📊 {away} @ {home} ({sport_title} - {format_ct_time(game_dt)}){live_tag}")
+        print(f"\n📊 {away} @ {home} ({sport_title} - {format_ct_short_time(game_dt)}){live_tag}")
 
 
         for market in MARKETS:
             cur.execute("""
-                SELECT sportsbook, side, decimal_price, point
+                SELECT sportsbook, side, decimal_price, point, betslip_link, market_link, event_link
                 FROM odds
                 WHERE game_id = %s AND market = %s AND fetched_at > NOW() - INTERVAL '30 minutes'
             """, (game_id, market))
@@ -129,16 +156,21 @@ def calculate_ev():
 
             # Organize odds by side
             odds_by_side = {}
-            for book, side, price, point in rows:
+            for book, side, price, point, betslip_link, market_link, event_link in rows:
+                link = betslip_link or market_link or event_link
                 if price is None:
                     continue
                 if side not in odds_by_side:
                     odds_by_side[side] = {}
-                odds_by_side[side][book] = (float(price), point)
+                odds_by_side[side][book] = {
+                "price": float(price),
+                "point": point,
+                "link": link
+            }
 
             for side, all_books in odds_by_side.items():
                 # Get sharp prices for side
-                sharp_prices = [v[0] for b, v in all_books.items() if b in SHARP_BOOKS and v[0] > 1]
+                sharp_prices = [v["price"] for b, v in all_books.items() if b in SHARP_BOOKS and v["price"] > 1]
                 if len(sharp_prices) < 2:
                     continue
 
@@ -156,7 +188,7 @@ def calculate_ev():
                     continue
 
                 # Use first available point as market line
-                _, line_point = next(iter(all_books.values()))
+                line_point = next(iter(all_books.values())).get("point")
                 
                 line_label = ""
                 if market == "spreads":
@@ -169,14 +201,18 @@ def calculate_ev():
 
                 for book in RECREATIONAL_BOOKS:
                     key = f"{home}_{away}_{sport_title}_{market}_{side}_{book}"
+                    # Update session stats
+                    bet_key = f"{away}@{home}_{market}_{side}_{book}_{line_label.strip()}"
+                    if any(bet.get("key") == bet_key for bet in session["bets"]):
+                        continue  # Skip duplicate
                     if book in all_books:
-                        price, _ = all_books[book]
+                        price = all_books[book]["price"]
+                        link = all_books[book].get("link")
                         ev = expected_value(win_prob, price)
                         ev_pct = ev * 100 if ev is not None else None
                         american = decimal_to_american(price)
-                        american = decimal_to_american(price)
                         # Filter by odds range (-250 to +120)
-                        if american is None or american < -250 or american > +120:
+                        if american is None or american < -250 or american > +2000:
                             continue
                         odds_str = f"{american:+}" if american is not None else "N/A"
                         ev_str = f"{ev_pct:+.2f}%" if ev_pct is not None else "N/A"
@@ -208,14 +244,10 @@ def calculate_ev():
                             with open(output_file, mode="a", newline="") as f:
                                 writer = csv.writer(f)
                                 writer.writerow([
-                                    format_ct_time(game_dt), sport_title, home, away,
+                                    format_ct_short_time(game_dt), sport_title, home, away,
                                     market_label, side.title(), line_label.strip("()").strip(),
                                     book.title(), price, american, win_prob, ev_pct, round(stake_amt, 2)
                                 ])
-                                # Update session stats
-                                bet_key = f"{away}@{home}_{market}_{side}_{book}_{line_label.strip()}"
-                                if any(bet.get("key") == bet_key for bet in session["bets"]):
-                                    continue  # Skip duplicate
 
                                 session["risked"] += stake_amt
                                 session["bets"].append({
@@ -225,12 +257,13 @@ def calculate_ev():
                                     "market": market,
                                     "line": line_label,
                                     "sport": sport_title,
-                                    "date": format_ct_time(game_dt),
+                                    "date": format_ct_short_time(game_dt),
                                     "side": side,
                                     "odds": price,
                                     "win_prob": round(win_prob, 4),
                                     "ev_pct": round(ev_pct, 2),
-                                    "stake": round(stake_amt, 2)
+                                    "stake": round(stake_amt, 2),
+                                    "link": link
                                 })
 
                         print(line)
@@ -253,63 +286,99 @@ def calculate_ev():
     print(f"Total Risked: ${session['risked']:.2f}")
     print(f"Bets Logged: {len(session['bets'])}")
 
+    # Only keep the latest bet for each unique bet_key
+    latest_bets = {}
+    for bet in session["bets"]:
+        bet_key = bet["key"]
+        if (
+            bet_key not in latest_bets
+            or bet["ev_pct"] > latest_bets[bet_key]["ev_pct"]
+            or bet["stake"] > latest_bets[bet_key]["stake"]
+        ):
+            latest_bets[bet_key] = bet
+
+    # Overwrite session["bets"] with only the latest bets
+    session["bets"] = list(latest_bets.values())
+
+    # --- Only send Discord alerts for new bets ---
+    new_bets = [bet for bet in session["bets"] if bet["key"] not in prev_bet_keys]
+
     MAX_DISCORD_LENGTH = 1900  # Leave buffer for formatting
-    discord_msg = "**📈 Top EV Bets Alert**\n"
-    char_count = len(discord_msg)
 
+    if new_bets:
+        grouped_bets = defaultdict(list)
+        for bet in new_bets:
+            key = (bet["game"], bet["market"], bet["side"])
+            grouped_bets[key].append(bet)
 
-    # if session["bets"]:
-    #     grouped_bets = defaultdict(list)
-    #     for bet in session["bets"]:
-    #         key = (bet["game"], bet["market"], bet["side"])
-    #         grouped_bets[key].append(bet)
+        messages = []
+        current_msg = "**📈 Top EV Bets Alert**\n"
+        printed_games = set()
 
-    #     messages = []
-    #     current_msg = "**📈 Top EV Bets Alert**\n"
-    #     printed_games = set()
+        for (game, market, side), bets in grouped_bets.items():
+            if not bets:
+                continue
 
-    #     for (game, market, side), bets in grouped_bets.items():
-    #         if not bets:
-    #             continue
+            unique_bets = {}
+            for bet in bets:
+                book = bet["book"]
+                if (
+                    book not in unique_bets
+                    or bet["ev_pct"] > unique_bets[book]["ev_pct"]
+                    or bet["stake"] > unique_bets[book]["stake"]
+                ):
+                    unique_bets[book] = bet
+            bets = list(unique_bets.values())
 
-    #         sport = bets[0].get("sport", "")
-    #         win_prob = bets[0].get("win_prob", 0)
-    #         line = bets[0].get("line", "")
-    #         market_title = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
+            sport = bets[0].get("sport", "")
+            win_prob = bets[0].get("win_prob", 0)
+            line = bets[0].get("line", "")
+            market_title = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
 
-    #         header = f"\n🏟️ {game} ({sport})\n"
-    #         market_line = f"  ➤ {market_title} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
+            time_str = bets[0]["date"]
+            header = f"\n🏟️ {game} ({sport} - {time_str})\n"
+            market_line = f"  ➤ {market_title} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
 
-    #         if len(current_msg) + len(header) + len(market_line) >= 1900:
-    #             messages.append(current_msg)
-    #             current_msg = "**📈 Top EV Bets Alert**\n"
+            if len(current_msg) + len(header) + len(market_line) >= 1900:
+                messages.append(current_msg)
+                current_msg = "**📈 Top EV Bets Alert**\n"
 
-    #         if game not in printed_games:
-    #             current_msg += header
-    #             printed_games.add(game)
+            if game not in printed_games:
+                current_msg += header
+                printed_games.add(game)
 
-    #         current_msg += market_line
+            current_msg += market_line
 
-    #         for bet in bets:
-    #             emoji = highlight_ev(bet["ev_pct"])
-    #             american = decimal_to_american(bet["odds"])
-    #             odds_str = f"{american:+}" if american else f"{bet['odds']:.2f}"
-    #             stake_str = f" | Kelly Stake: ${bet['stake']:.2f}" if bet["stake"] >= 1 else ""
-    #             bet_line = f"    {bet['book'].title():<10} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
+            for bet in bets:
+                emoji = highlight_ev(bet["ev_pct"])
+                american = decimal_to_american(bet["odds"])
+                odds_str = f"{american:+}" if american else f"{bet['odds']:.2f}"
+                stake_str = f" | Stake: ${bet['stake']:.2f}" if bet["stake"] >= 1 else ""
+                link = bet.get("link")
+                book_title = bet["book"].title()
+                book_str = f"[{book_title}]({link})" if link else book_title
+                # check if the game is live by looking at the game date and compare it to the current time, if its equal or after the add 🛰️ emoji
+                if bet["date"] == format_ct_short_time(datetime.now(pytz.timezone("America/Chicago"))):
+                    emoji = "🛰️ " + emoji
+                bet_line = f"    {book_str:<40} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
 
-    #             if len(current_msg) + len(bet_line) >= 1900:
-    #                 messages.append(current_msg)
-    #                 current_msg = "**📈 Top EV Bets Alert**\n"
+                if len(current_msg) + len(bet_line) >= 1900:
+                    messages.append(current_msg)
+                    current_msg = "**📈 Top EV Bets Alert**\n"
 
-    #             current_msg += bet_line
+                current_msg += bet_line
 
-    #     if current_msg.strip() and current_msg not in messages:
-    #         messages.append(current_msg)
+        if current_msg.strip() and current_msg not in messages:
+            messages.append(current_msg)
 
-    #     for msg in messages:
-    #         send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
+        for msg in messages:
+            send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
 
-
+    # Save session and line cache as usual
+    conn.close()
+    save_session(session)
+    save_line_cache(line_cache)
+    print("\n✅ EV% analysis complete.")
 
 
 if __name__ == "__main__":

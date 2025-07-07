@@ -48,6 +48,7 @@ def parse_game(game_json):
     odds_list = []
     for bookmaker in game_json.get("bookmakers", []):
         sportsbook = bookmaker["key"]
+        links = bookmaker.get("links", {})  # ✅ grab links per book
 
         for market in bookmaker.get("markets", []):
             market_key = market["key"]
@@ -85,7 +86,10 @@ def parse_game(game_json):
                     "decimal_price": decimal_price,
                     "price": american_price,
                     "implied_prob": implied_prob,
-                    "point": point
+                    "point": point,
+                    "event_link": links.get("event"),
+                    "market_link": links.get("market"),
+                    "betslip_link": links.get("betSlip")
                 })
 
 
@@ -100,7 +104,8 @@ def fetch_odds_for_sport(sport_key: str, region: str = "us", markets: str = MARK
         "apiKey": ODDS_API_KEY,
         "regions": region,
         "markets": markets,
-        "bookmakers": ",".join(ALL_BOOKS)
+        "bookmakers": ",".join(ALL_BOOKS),
+        "includeLinks": "true"
     }
 
     try:
