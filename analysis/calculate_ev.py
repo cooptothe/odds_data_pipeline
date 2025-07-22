@@ -312,7 +312,12 @@ def calculate_ev():
             grouped_bets[key].append(bet)
 
         messages = []
-        current_msg = "**📈 Top EV Bets Alert**\n"
+        # --- Add date and time to the header ---
+        now_ct = datetime.now(pytz.timezone("America/Chicago"))
+        date_str = now_ct.strftime("%A, %B %d, %Y")
+        time_str = now_ct.strftime("%I:%M%p").lstrip("0").lower()
+        header_line = f"**📈 Top EV Bets Alert**\n**{date_str} | {time_str} CT**\n"
+        current_msg = header_line
         printed_games = set()
 
         for (game, market, side), bets in grouped_bets.items():
@@ -335,13 +340,13 @@ def calculate_ev():
             line = bets[0].get("line", "")
             market_title = market.replace("h2h", "💰 Moneyline").replace("spreads", "📏 Spread").replace("totals", "📊 Total")
 
-            time_str = bets[0]["date"]
-            header = f"\n🏟️ {game} ({sport} - {time_str})\n"
+            time_str_bet = bets[0]["date"]
+            header = f"\n🏟️ {game} ({sport} - {time_str_bet})\n"
             market_line = f"  ➤ {market_title} {line} | {side.title().upper()} (Win%: {win_prob:.2%})\n"
 
             if len(current_msg) + len(header) + len(market_line) >= 1900:
                 messages.append(current_msg)
-                current_msg = "**📈 Top EV Bets Alert**\n"
+                current_msg = header_line
 
             if game not in printed_games:
                 current_msg += header
@@ -357,14 +362,13 @@ def calculate_ev():
                 link = bet.get("link")
                 book_title = bet["book"].title()
                 book_str = f"[{book_title}]({link})" if link else book_title
-                # check if the game is live by looking at the game date and compare it to the current time, if its equal or after the add 🛰️ emoji
                 if bet["date"] == format_ct_short_time(datetime.now(pytz.timezone("America/Chicago"))):
                     emoji = "🛰️ " + emoji
                 bet_line = f"    {book_str:<40} | Odds: {odds_str:<6} | EV: +{bet['ev_pct']:.2f}%{stake_str} {emoji}\n"
 
                 if len(current_msg) + len(bet_line) >= 1900:
                     messages.append(current_msg)
-                    current_msg = "**📈 Top EV Bets Alert**\n"
+                    current_msg = header_line
 
                 current_msg += bet_line
 
