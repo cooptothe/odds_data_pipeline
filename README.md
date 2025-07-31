@@ -48,4 +48,9 @@ You'll need a free or paid key from The Odds API stored in your .env:
 
 https://github.com/user-attachments/assets/ec7666e7-825b-4bd4-aca5-ff3e8e7aec95
 
+## Edward Cooper
+A passionate developer with experience in building user-focused mobile applications.
+
+[Portfolio](https://edwardcoopers-portfolio.netlify.app/)
+[LinkedIn](https://www.linkedin.com/in/edwardcooperii/)
 
