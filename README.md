@@ -40,7 +40,8 @@ python -m analysis.calculate_ev --bankroll 100
 You'll need a free or paid key from The Odds API stored in your .env:
 
 **ODDS_API_KEY=your_api_key**
-DISCORD_WEBHOOK_URL=your_webhook_url
+
+**DISCORD_WEBHOOK_URL=your_webhook_url**
 
 
 ## DEMO
