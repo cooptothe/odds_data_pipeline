@@ -16,6 +16,7 @@ DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")  # store in .env
 import subprocess
 print("🔄 Running odds ingestion pipeline...")
 
+print("Current working directory:", os.getcwd())
 parser = argparse.ArgumentParser()
 parser.add_argument("--bankroll", type=float, default=100, help="Bankroll amount for Kelly staking")
 parser.add_argument("--sport", type=str, default=None, help="Sport key to filter (e.g. baseball_mlb)")
@@ -227,11 +228,11 @@ def calculate_ev():
                         line = f"    {book.title():<10} | Odds: {odds_str:<6} | EV: {ev_str}"
                         if stake_str:
                             line += f" | Kelly Stake: {stake_str}"
-                        if ev_pct is None or ev_pct < 3 or ev_pct > 14:
+                        if ev_pct is None or ev_pct < 1 or ev_pct > 14:
                             continue
                         emoji = highlight_ev(ev_pct)
                         line += f" {emoji} {change_indicator}"
-                        if 3 <= ev_pct <= 14:
+                        if 1 <= ev_pct <= 14:
                             with open(output_file, mode="a", newline="") as f:
                                 writer = csv.writer(f)
                                 writer.writerow([
@@ -285,7 +286,7 @@ def calculate_ev():
 
     session["bets"] = list(latest_bets.values())
 
-    new_bets = [bet for bet in session["bets"] if bet["key"] not in prev_bet_keys]
+    new_bets = session["bets"]
 
     MAX_DISCORD_LENGTH = 1900
 
@@ -360,6 +361,16 @@ def calculate_ev():
 
         for msg in messages:
             send_discord_alert(msg.strip(), DISCORD_WEBHOOK_URL)
+
+    print("\n📊 Session Summary:")
+    print(f"Bankroll: ${session['bankroll']:.2f}")
+    print(f"Total Risked: ${session['risked']:.2f}")
+    print(f"Bets Logged: {len(session['bets'])}")
+
+    print("Session file path:", os.path.abspath(SESSION_FILE))
+    print("Session contents:", session)
+    print("Prev bet keys:", prev_bet_keys)
+    print("New bets:", new_bets)
 
     print("\n✅ EV% analysis complete.")
 

@@ -1,1 +1,546 @@
-{}
+{
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_h2h_away_espnbet": {
+    "ev_pct": 51.300000000000004,
+    "price": 3.2
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_h2h_home_draftkings": {
+    "ev_pct": 6.47,
+    "price": 2.1
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_h2h_home_fanduel": {
+    "ev_pct": 6.47,
+    "price": 2.1
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_h2h_home_espnbet": {
+    "ev_pct": 6.47,
+    "price": 2.1
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_h2h_home_betmgm": {
+    "ev_pct": 9.0,
+    "price": 2.15
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_away_draftkings": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_away_fanduel": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_away_espnbet": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_away_betmgm": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_home_draftkings": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_home_fanduel": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_home_espnbet": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_spreads_home_betmgm": {
+    "ev_pct": 9.0,
+    "price": 1.87
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_over_draftkings": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_over_fanduel": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_over_espnbet": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_over_betmgm": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_under_draftkings": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_under_fanduel": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_under_espnbet": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Lechia Gda\u0144sk_GKS Katowice_EKSTRAKLASA_totals_under_betmgm": {
+    "ev_pct": 9.0,
+    "price": 1.85
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_h2h_home_draftkings": {
+    "ev_pct": 5.74,
+    "price": 2.1
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_h2h_home_fanduel": {
+    "ev_pct": 5.74,
+    "price": 2.1
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_h2h_home_espnbet": {
+    "ev_pct": 8.25,
+    "price": 2.15
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_h2h_home_betmgm": {
+    "ev_pct": 3.2199999999999998,
+    "price": 2.05
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_away_draftkings": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_away_fanduel": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_away_espnbet": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_away_betmgm": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_home_draftkings": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_home_fanduel": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_home_espnbet": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_spreads_home_betmgm": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.84
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_over_draftkings": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_over_fanduel": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_over_espnbet": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_over_betmgm": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_under_draftkings": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_under_fanduel": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_under_espnbet": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "Arminia Bielefeld_1. FC Magdeburg_BUNDESLIGA2_totals_under_betmgm": {
+    "ev_pct": 3.2199999999999998,
+    "price": 1.93
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_home_draftkings": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_home_fanduel": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_home_espnbet": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_home_betmgm": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_away_draftkings": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_away_fanduel": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_away_espnbet": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_spreads_away_betmgm": {
+    "ev_pct": 87.6,
+    "price": 2.0
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_over_draftkings": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_over_fanduel": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_over_espnbet": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_over_betmgm": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_under_draftkings": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_under_fanduel": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_under_espnbet": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SC Paderborn_VfL Bochum_BUNDESLIGA2_totals_under_betmgm": {
+    "ev_pct": 87.6,
+    "price": 1.85
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_h2h_away_espnbet": {
+    "ev_pct": 37.76,
+    "price": 2.8
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_h2h_away_betmgm": {
+    "ev_pct": 37.76,
+    "price": 2.8
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_h2h_home_espnbet": {
+    "ev_pct": 17.01,
+    "price": 2.35
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_h2h_home_betmgm": {
+    "ev_pct": 17.01,
+    "price": 2.35
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_away_draftkings": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_away_fanduel": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_away_espnbet": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_away_betmgm": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_home_draftkings": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_home_fanduel": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_home_espnbet": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_spreads_home_betmgm": {
+    "ev_pct": 17.01,
+    "price": 1.77
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_over_draftkings": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_over_fanduel": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_over_espnbet": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_over_betmgm": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_under_draftkings": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_under_fanduel": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_under_espnbet": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "SonderjyskE_Randers FC_SUPERLIGA_totals_under_betmgm": {
+    "ev_pct": 17.01,
+    "price": 1.87
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_h2h_home_espnbet": {
+    "ev_pct": -45.26,
+    "price": 1.09
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_h2h_away_espnbet": {
+    "ev_pct": 556.6,
+    "price": 14.0
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_home_draftkings": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_home_fanduel": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_home_espnbet": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_home_betmgm": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_away_draftkings": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_away_fanduel": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_away_espnbet": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_spreads_away_betmgm": {
+    "ev_pct": 673.85,
+    "price": 1.89
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_over_draftkings": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_over_fanduel": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_over_espnbet": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_over_betmgm": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_under_draftkings": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_under_fanduel": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_under_espnbet": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Bod\u00f8/Glimt_Kristiansund BK_ELITESERIEN_totals_under_betmgm": {
+    "ev_pct": 673.85,
+    "price": 1.95
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_home_draftkings": {
+    "ev_pct": 673.85,
+    "price": 2.16
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_home_fanduel": {
+    "ev_pct": 673.85,
+    "price": 2.16
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_home_betmgm": {
+    "ev_pct": 49.38,
+    "price": 3.2
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_away_draftkings": {
+    "ev_pct": 49.38,
+    "price": 3.2
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_away_fanduel": {
+    "ev_pct": 49.38,
+    "price": 3.2
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_away_espnbet": {
+    "ev_pct": 1.16,
+    "price": 2.0
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_h2h_away_betmgm": {
+    "ev_pct": 1.16,
+    "price": 2.0
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_home_draftkings": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_home_fanduel": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_home_espnbet": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_home_betmgm": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_away_draftkings": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_away_fanduel": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_away_espnbet": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_spreads_away_betmgm": {
+    "ev_pct": 1.16,
+    "price": 1.83
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_over_draftkings": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_over_fanduel": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_over_espnbet": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_over_betmgm": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_under_draftkings": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_under_fanduel": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_under_espnbet": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Jahn Regensburg_Rot-Weiss Essen_LIGA3_totals_under_betmgm": {
+    "ev_pct": 1.16,
+    "price": 1.91
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_away_draftkings": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_away_fanduel": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_away_espnbet": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_away_betmgm": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_home_draftkings": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_home_fanduel": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_home_espnbet": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_spreads_home_betmgm": {
+    "ev_pct": 21.5,
+    "price": 2.05
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_over_draftkings": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_over_fanduel": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_over_espnbet": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_over_betmgm": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_under_draftkings": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_under_fanduel": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_under_espnbet": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Deportivo Riestra_Central C\u00f3rdoba_DIVISION_totals_under_betmgm": {
+    "ev_pct": 21.5,
+    "price": 1.88
+  },
+  "Washington Nationals_Pittsburgh Pirates_MLB_spreads_away_fanduel": {
+    "ev_pct": 2.44,
+    "price": 2.62
+  },
+  "Washington Nationals_Pittsburgh Pirates_MLB_spreads_away_espnbet": {
+    "ev_pct": 1.66,
+    "price": 2.6
+  }
+}

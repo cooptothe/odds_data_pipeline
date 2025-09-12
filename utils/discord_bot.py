@@ -33,7 +33,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if CHANNEL_ID and message.channel.id != CHANNEL_ID:
+    if CHANNEL_ID and message.channel.id != int(CHANNEL_ID):
         return
 
     if message.content.startswith("!ev"):
@@ -47,31 +47,28 @@ async def on_message(message):
             await message.channel.send(f"Invalid sport key. Valid keys:\n" + ", ".join(SPORT_KEYS))
             return
 
-        bankroll = parts[2] if len(parts) == 3 else "100"  # Default to 100 if not specified
+        bankroll = parts[2] if len(parts) == 3 else "100"
 
-        await message.channel.send(f"🔄 Running EV analysis for `{sport_key}` with bankroll ${bankroll}. Please wait...")
+        await message.channel.send(
+            f"🔄 Running EV analysis for `{sport_key}` with bankroll ${bankroll}. Please wait..."
+        )
         try:
+            # Run calculate_ev.py directly; it will send Discord alerts via webhook
             result = subprocess.run(
-                ["python", "-m", "pipelines.fetch_odds_api", "--sport", sport_key],
-                capture_output=True, text=True, timeout=60
+                [
+                    "python", "-m", "analysis.calculate_ev",
+                    "--sport", sport_key,
+                    "--bankroll", bankroll
+                ],
+                capture_output=True, text=True, timeout=300,
+                cwd=os.path.abspath(os.path.dirname(__file__) + "/..")
             )
             if result.returncode == 0:
-                await message.channel.send(f"✅ Odds fetched for `{sport_key}`. Now calculating EV...")
-                ev_result = subprocess.run(
-                    [
-                        "python", "-m", "analysis.calculate_ev",
-                        "--sport", sport_key,
-                        "--bankroll", bankroll
-                    ],
-                    capture_output=True, text=True, timeout=120,
-                    cwd=os.path.abspath(os.path.dirname(__file__) + "/..")
+                await message.channel.send(
+                    f"✅ EV calculation complete for `{sport_key}` with bankroll ${bankroll}."
                 )
-                if ev_result.returncode == 0:
-                    await message.channel.send(f"✅ EV calculation complete for `{sport_key}` with bankroll ${bankroll}.")
-                else:
-                    await message.channel.send(f"❌ Error calculating EV:\n{ev_result.stderr}")
             else:
-                await message.channel.send(f"❌ Error fetching odds:\n{result.stderr}")
+                await message.channel.send(f"❌ Error calculating EV:\n{result.stderr}")
         except Exception as e:
             await message.channel.send(f"❌ Exception: {e}")
 
