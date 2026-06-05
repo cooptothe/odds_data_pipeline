@@ -4,7 +4,7 @@ A real-time betting odds data pipeline built in Python that analyzes sharp vs re
 
 ---
 
-## 🚀 Features
+## Features
 
 - **Supports 15+ Sports**: MLB, NBA, NFL, NCAAF, MMA, Tennis, NHL, Soccer (EPL, MLS, etc.)
 - **Sharp vs Rec Comparison**: Compares Pinnacle, Circa, BetOnline odds vs books like DraftKings, FanDuel, BetMGM.
@@ -17,7 +17,7 @@ A real-time betting odds data pipeline built in Python that analyzes sharp vs re
   - Fresh lines (within 30 minutes)
 
 
- 🛠️ Tech Stack
+ Tech Stack
 **Python (3.11+)**
 
 **PostgreSQL (session tracking, odds storage)**
@@ -26,7 +26,7 @@ A real-time betting odds data pipeline built in Python that analyzes sharp vs re
 
 **The Odds API (https://the-odds-api.com/)**
 
-🧰 Usage
+Usage
 # Fetch odds for a specific sport (e.g. MLB)
 ```
 python -m pipelines.fetch_odds_api --sport baseball_mlb
@@ -36,13 +36,49 @@ python -m pipelines.fetch_odds_api --sport baseball_mlb
 python -m analysis.calculate_ev --bankroll 100
 ```
 # API keys and webhook URLs
-**🔐 API Key**
+** API Key**
 You'll need a free or paid key from The Odds API stored in your .env:
 
 **ODDS_API_KEY=your_api_key**
 
 **DISCORD_WEBHOOK_URL=your_webhook_url**
 
+## Database Setup
+
+1. Install PostgreSQL for Windows:
+   - Download from https://www.postgresql.org/download/windows/
+   - Run the installer and note the superuser password
+
+2. Create the database:
+```powershell
+psql -U postgres -c "CREATE DATABASE odds_data_pipeline;"
+```
+
+3. Run the schema:
+```powershell
+psql -U postgres -d odds_data_pipeline -f db/schema.sql
+```
+
+4. Configure your `.env` file with DB credentials:
+```text
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=odds_data_pipeline
+DB_USER=postgres
+DB_PASSWORD=your_password
+ODDS_API_KEY=your_api_key
+DISCORD_WEBHOOK_URL=your_webhook_url
+```
+
+5. Install Python dependencies:
+```powershell
+pip install -r requirements.txt
+```
+
+6. Verify the connection by running a pipeline command:
+```powershell
+python -m pipelines.fetch_odds_api --sport baseball_mlb
+```
 
 ## DEMO
 
