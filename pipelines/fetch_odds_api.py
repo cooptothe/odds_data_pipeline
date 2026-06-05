@@ -36,7 +36,7 @@ def cleanup_old_games(conn):
 
 def run(sport_key):
     conn = connect()
-    # 🔥 Clean up old/stale games before fetching new ones
+    # Clean up old/stale games before fetching new ones
     cleanup_old_games(conn)
     games = fetch_odds_for_sport(sport_key)
 
