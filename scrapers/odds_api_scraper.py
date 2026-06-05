@@ -10,7 +10,7 @@ ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4/sports"
 
 # Books
 SHARP_BOOKS = ["pinnacle", "novig", "betonlineag"]
-RECREATIONAL_BOOKS = ["draftkings", "fanduel", "espnbet", "betmgm"]
+RECREATIONAL_BOOKS = ["draftkings", "fanduel", "fanatics", "betmgm", "espnbet"]
 ALL_BOOKS = SHARP_BOOKS + RECREATIONAL_BOOKS
 
 MARKETS = "h2h,spreads,totals"  # Supported markets
